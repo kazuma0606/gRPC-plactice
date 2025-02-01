@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package file;
+option go_package = "./pb";
+
+//unaryRPC
+message ListFilesRequest {};
+message ListFilesResponse {
+  repeated string filenames = 1;
+};
+
+//server streaming
+message DownloadRequest {
+  string filename = 1;
+};
+message DownloadResponse {
+  bytes data = 1;
+};
+
+
+//client streaming
+message UploadRequest {
+  bytes data = 1;
+};
+message UploadResponse {
+  int32 size = 1;
+};
+
+//duplex streaming
+message UploadAndNotifyProgressRequest {
+  bytes data = 1;
+};
+message UploadAndNotifyProgressResponse {
+  string message = 1;
+};
+
+service FileService {
+  rpc ListFiles (ListFilesRequest) returns (ListFilesResponse);
+  rpc DownLoad ( DownloadRequest) returns (stream DownloadResponse);
+  rpc Upload (stream UploadRequest) returns (UploadResponse);
+  rpc UploadAndNotifyProgress (stream UploadAndNotifyProgressRequest) returns (stream UploadAndNotifyProgressResponse);
+}
